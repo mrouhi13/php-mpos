@@ -39,7 +39,7 @@ try {
       $newerror = null;
     }
     // check if there is more than one account set on wallet
-    $accounts = $bitcoin->listaccounts();
+    $accounts = $bitcoin->listlabels();
     if (count($accounts) > 1 && $accounts[''] <= 0) {
       $newerror = array();
       $newerror['name'] = "Coin daemon";

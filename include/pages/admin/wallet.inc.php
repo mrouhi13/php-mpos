@@ -12,13 +12,13 @@ if (!$smarty->isCached('master.tpl', $smarty_cache_key)) {
   if ($bitcoin->can_connect() === true) {
     $dBalance = $bitcoin->getrealbalance();
 
-    $dWalletAccounts = $bitcoin->listaccounts();
+    $dWalletAccounts = $bitcoin->listlabels();
     $dAddressCount = count($dWalletAccounts);
 
     $dAccountAddresses = array();
     foreach($dWalletAccounts as $key => $value)
     {
-      $dAccountAddresses[$key] = $bitcoin->getaddressesbyaccount((string)$key);
+      $dAccountAddresses[$value] = array_keys($bitcoin->getaddressesbylabel($value))[0];
     }
 
     $aGetInfo = $bitcoin->getinfo();
@@ -26,7 +26,7 @@ if (!$smarty->isCached('master.tpl', $smarty_cache_key)) {
     if ($aGetInfo['connections'] == 0) $aGetInfo['errors'] = 'No peers';
     # Check if daemon is downloading the blockchain, estimated
     if ($dDownloadPercentage = $bitcoin->getblockchaindownload()) $aGetInfo['errors'] = "Downloading: $dDownloadPercentage%";
-    $aGetTransactions = $bitcoin->listtransactions('', (int)$setting->getValue('wallet_transaction_limit', 25));
+    $aGetTransactions = $bitcoin->listtransactions('*', (int)$setting->getValue('wallet_transaction_limit', 25));
     if (is_array($aGetInfo) && array_key_exists('newmint', $aGetInfo)) {
       $dNewmint = $aGetInfo['newmint'];
     } else {
